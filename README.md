@@ -43,7 +43,7 @@ A brief hands on demo of how to use NVIDIA Triton Server for multiple models.
     Jupyter Lab URL:
         master_ip=$(kubectl get nodes -l node-role.kubernetes.io/master= --no-headers -o custom-columns=IP:.status.addresses.*.address | cut -f1 -d, | head -1)
         nodePort="$(kubectl get svc -n default tritondemo-tritoninferenceserver --no-headers -o custom-columns=PORT:.spec.ports[?\(@.name==\"http2\"\)].nodePort)"
-        kf_url="http://${master_ip}:${nodePort}"
+        jl_url="http://${master_ip}:${nodePort}"
    ```
 
 6. Review deployed services:
@@ -76,3 +76,5 @@ A brief hands on demo of how to use NVIDIA Triton Server for multiple models.
    4. Triton Metrics: `dgx-01:30802`
 
 8. Monitor Triton Server Logs:
+
+   1. `kubectl logs -f pod/tritondemo-tritoninferenceserver-5f66ccb7b5-htrjk -c tritoninferenceserver`
