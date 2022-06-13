@@ -78,3 +78,8 @@ A brief hands on demo of how to use NVIDIA Triton Server for multiple models.
 8. Monitor Triton Server Logs:
 
    1. `kubectl logs -f pod/tritondemo-tritoninferenceserver-5f66ccb7b5-htrjk -c tritoninferenceserver`
+
+9. Uninstall
+   ```bash
+   helm uninstall triton-demo
+   ```
