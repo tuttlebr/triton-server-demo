@@ -1,0 +1,6 @@
+services:
+  triton-server-demo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: registry.local:31500/triton-server-demo:0.1.0
