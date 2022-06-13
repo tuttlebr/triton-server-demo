@@ -28,7 +28,7 @@ replicaCount: 1
 
 image:
   imageName: registry.local:31500/triton-server-demo:0.1.0
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   modelRepositoryPath: /opt/tritonserver/model_repository
   numGpus: 1
 
