@@ -52,12 +52,12 @@ spec:
       subdomain: {{ template "tensorrt-inference-server.fullname" . }}
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.imageName }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.tritonserver.imageName }}"
+          imagePullPolicy: {{ .Values.tritonserver.pullPolicy }}
           resources:
             limits:
-              nvidia.com/gpu: {{ .Values.image.numGpus }}
-          args: ["tritonserver", "--model-repository={{ .Values.image.modelRepositoryPath }}"]
+              nvidia.com/gpu: {{ .Values.tritonserver.numGpus }}
+          args: ["tritonserver", "--model-repository={{ .Values.tritonserver.modelRepositoryPath }}"]
           ports:
             - containerPort: 8000
               name: http
@@ -76,8 +76,11 @@ spec:
               path: /v2/health/ready
               port: http
         - name: {{ .Chart.Name }}-jupyterlab
-          image: "{{ .Values.image.imageName }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.modelnavigator.imageName }}"
+          imagePullPolicy: {{ .Values.modelnavigator.pullPolicy }}
+          resources:
+            limits:
+              nvidia.com/gpu: {{ .Values.modelnavigator.numGpus }}
           args:
             - jupyter
             - lab
@@ -85,11 +88,11 @@ spec:
             - --no-browser
             - --allow-root
             - --port=8888
-            - --ServerApp.token=''
-            - --ServerApp.password=''
-            - --ServerApp.allow_origin='*'
-            - --ServerApp.base_url=/
-            - --ServerApp.root_dir=/workspace
+            - --NotebookApp.token=''
+            - --NotebookApp.password=''
+            - --NotebookApp.allow_origin='*'
+            - --NotebookApp.base_url=/
+            - --NotebookApp.notebook_dir=/workspace
             - --LabApp.extensions_in_dev_mode=True
           ports:
             - containerPort: 8888

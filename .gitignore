@@ -1,1 +1,5 @@
 model_repository/*
+/build
+/.vscode
+*.so
+node_modules

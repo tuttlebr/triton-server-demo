@@ -83,3 +83,24 @@ A brief hands on demo of how to use NVIDIA Triton Server for multiple models.
    ```bash
    helm uninstall triton-demo
    ```
+
+### TensorRT Model Prep
+```bash
+docker run -it --rm \
+   -p 8888:8888 \
+   --ulimit memlock=-1 \
+   --ulimit stack=67108864 \
+   --runtime nvidia \
+   -v $PWD:/workspace/local \
+   --entrypoint=jupyter \
+   registry.local:31500/triton-server-demo:0.1.0 \
+   lab --ip=0.0.0.0 \
+   --no-browser \
+   --allow-root \
+   --port=8888 \
+   --NotebookApp.token='' \
+   --NotebookApp.password='' \
+   --NotebookApp.allow_origin='*' \
+   --NotebookApp.base_url=/ \
+   --NotebookApp.notebook_dir=/workspace
+```

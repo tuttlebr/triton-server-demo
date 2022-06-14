@@ -1,6 +1,15 @@
 services:
-  triton-server-demo:
+  tritonserver:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - BASE_IMAGE=nvcr.io/nvidia/tritonserver:22.04-py3
     image: registry.local:31500/triton-server-demo:0.1.0
+  modelnavigator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - BASE_IMAGE=nvcr.io/nvidia/pytorch:22.04-py3
+    image: registry.local:31500/tensorrt-demo:0.1.0

@@ -26,11 +26,13 @@
 
 replicaCount: 1
 
-image:
-  imageName: registry.local:31500/triton-server-demo:0.1.0
+tritonserver:
+  imageName: registry.local:31500/tritonserver:0.1.0
   pullPolicy: Always
   modelRepositoryPath: /opt/tritonserver/model_repository
   numGpus: 1
 
-service:
-  type: LoadBalancer
+modelnavigator:
+  imageName: registry.local:31500/modelnavigator:0.1.0
+  pullPolicy: Always
+  numGpus: 1
