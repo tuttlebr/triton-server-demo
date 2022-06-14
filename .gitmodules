@@ -1,4 +1,4 @@
 [submodule "model_navigator"]
 	path = model_navigator
 	url = https://github.com/triton-inference-server/model_navigator.git
-	branch = v0.3.0
+	tag = v0.3.0
