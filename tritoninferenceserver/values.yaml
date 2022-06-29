@@ -52,7 +52,7 @@ traefik:
       protocol: TCP
 
 autoscaling:
-  minReplicas: 2
+  minReplicas: 1
   maxReplicas: 3
   metrics:
     - type: Pods

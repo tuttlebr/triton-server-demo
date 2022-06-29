@@ -31,6 +31,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  annotations: 
+    role: server
   name: {{ template "triton-inference-server.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
@@ -49,13 +51,7 @@ spec:
       labels:
         app: {{ template "triton-inference-server.name" . }}
         release: {{ .Release.Name }}
-
     spec:
-      volumes:
-        - name: {{ template "triton-inference-server.fullname" . }}
-          persistentVolumeClaim:
-            claimName: {{ template "triton-inference-server.fullname" . }}
-
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.imageName }}"
@@ -81,14 +77,43 @@ spec:
             httpGet:
               path: /v2/health/ready
               port: http
-              
-        - name: {{ .Chart.Name }}-dev
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations: 
+    role: client
+  name: {{ template "triton-inference-server.fullname" . }}-client
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "triton-inference-server.name" . }}
+    chart: {{ template "triton-inference-server.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "triton-inference-server.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "triton-inference-server.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      volumes:
+        - name: {{ template "triton-inference-server.fullname" . }}
+          persistentVolumeClaim:
+            claimName: {{ template "triton-inference-server.fullname" . }}
+      containers: 
+        - name: {{ .Chart.Name }}-client
           image: "{{ .Values.devimage.imageName }}"
           imagePullPolicy: {{ .Values.devimage.pullPolicy }}
           volumeMounts:
             - mountPath: /opt/tritonserver/pvc
               name: {{ template "triton-inference-server.fullname" . }}
           args: ["sleep", "infinity"]
-      securityContext:
-        runAsUser: 1000
-        fsGroup: 1000
