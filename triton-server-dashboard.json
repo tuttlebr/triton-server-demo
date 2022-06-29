@@ -485,13 +485,13 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "avg(rate(nv_inference_queue_duration_us[30s])/(1+rate(nv_inference_request_success[30s]))) by (pod) / 1000",
+          "expr": "avg(rate(nv_inference_queue_duration_us[30s])/(1+rate(nv_inference_request_success[30s]))) by (model) / 1000",
           "interval": "",
-          "legendFormat": "{{instance}}",
+          "legendFormat": "{{model}}",
           "refId": "A"
         }
       ],
-      "title": "Average Queue Time by Pod",
+      "title": "Average Queue Time by Model",
       "type": "timeseries"
     },
     {
@@ -571,10 +571,10 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum by (pod) (rate(nv_inference_request_success[30s]))",
+          "expr": "sum by (model,endpoint) (rate(nv_inference_request_success[30s]))",
           "instant": false,
           "interval": "",
-          "legendFormat": "Success {{pod}}",
+          "legendFormat": "{{model}} success",
           "refId": "A"
         },
         {
@@ -583,15 +583,15 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum by (pod) (rate(nv_inference_request_failure[30s]))",
+          "expr": "sum by (model,endpoint) (rate(nv_inference_request_failure[30s]))",
           "hide": false,
           "instant": false,
           "interval": "",
-          "legendFormat": "Failure {{pod}}",
+          "legendFormat": "{{model}} failure",
           "refId": "B"
         }
       ],
-      "title": "Cumulative Inference Requests by Pod",
+      "title": "Cumulative Inference Requests by Model",
       "type": "timeseries"
     }
   ],
@@ -603,13 +603,13 @@
     "list": []
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-3h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Triton inference Server II",
   "uid": "xSX4ul3nz",
-  "version": 8,
+  "version": 10,
   "weekStart": ""
 }
