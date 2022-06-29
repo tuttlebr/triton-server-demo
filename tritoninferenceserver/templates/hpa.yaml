@@ -24,19 +24,29 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-apiVersion: v2
-appVersion: "1.0"
-description: Triton Inference Server
-name: triton-inference-server
-version: 1.0.0
-dependencies:
-  - name: traefik
-    version: "~10.6.2"
-    repository: "https://helm.traefik.io/traefik"
-    tags:
-      - loadBalancing
-  - name: prometheus-adapter
-    version: "~3.0.0"
-    repository: "https://prometheus-community.github.io/helm-charts"
-    tags:
-      - autoscaling
+# Creates the horizontal pod autoscaler for the Triton pod deployment.
+# In order to use custom metrics (ie metrics other than CPU usage) with this
+# autoscaler, you must have enabled installation of the prometheus adapter.
+# This autoscaler (and the prometheus adapter) will only be installed in the
+# autoscaling tag is set to true.
+
+{{- if .Values.tags.autoscaling }}
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: triton-hpa
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "triton-inference-server.name" . }}
+    chart: {{ template "triton-inference-server.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ template "triton-inference-server.fullname" . }}
+  minReplicas: {{ .Values.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.autoscaling.maxReplicas }}
+  metrics: {{ toYaml .Values.autoscaling.metrics | nindent 2}}
+{{- end -}}

@@ -1,4 +1,5 @@
-model_repository/*
+model_repository/densenet_onnx/1/model.onnx
+model_repository/inception_graphdef/1/model.graphdef
 /build
 /.vscode
 *.so

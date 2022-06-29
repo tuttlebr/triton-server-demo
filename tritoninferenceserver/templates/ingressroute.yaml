@@ -24,19 +24,46 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-apiVersion: v2
-appVersion: "1.0"
-description: Triton Inference Server
-name: triton-inference-server
-version: 1.0.0
-dependencies:
-  - name: traefik
-    version: "~10.6.2"
-    repository: "https://helm.traefik.io/traefik"
-    tags:
-      - loadBalancing
-  - name: prometheus-adapter
-    version: "~3.0.0"
-    repository: "https://prometheus-community.github.io/helm-charts"
-    tags:
-      - autoscaling
+# Creates the traefik IngressRoutes that allow for external access to the
+# triton service. Two routes are created, one for gRPC and one for HTTP.
+# Requires deployment of the traefik IngressRoute CRD, along with various roles
+# and permissions, most easily accomplished through the referenced traefik
+# helm chart. Will only be installed if the loadBalancing tag is set to true.
+
+{{- if .Values.tags.loadBalancing }}
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ template "triton-inference-server-ingressroute-http.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "triton-inference-server.name" . }}
+    chart: {{ template "triton-inference-server.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  entryPoints:
+    - triton-http
+  routes:
+    - match: PathPrefix(`/`)
+      kind: Rule
+      services:
+        - name: {{ template "triton-inference-server.fullname" . }}
+          port: 8000
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ template "triton-inference-server-ingressroute-grpc.name" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  entryPoints:
+    - triton-grpc
+  routes:
+    - match: PathPrefix(`/`)
+      kind: Rule
+      services:
+        - name: {{ template "triton-inference-server.fullname" . }}
+          port: 8001
+          scheme: h2c
+{{- end -}}

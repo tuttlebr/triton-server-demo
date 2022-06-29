@@ -1,4 +1,4 @@
-# Copyright (c) 2019, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2019-2021, NVIDIA CORPORATION. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -24,40 +24,46 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# Creates a deployment for the Triton Inference Server pods
+# Each pod contains a Triton container and an nfs mount as specified in
+# values.yaml for the model repository
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "tensorrt-inference-server.fullname" . }}
+  name: {{ template "triton-inference-server.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ template "tensorrt-inference-server.name" . }}
-    chart: {{ template "tensorrt-inference-server.chart" . }}
+    app: {{ template "triton-inference-server.name" . }}
+    chart: {{ template "triton-inference-server.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-    function: {{ template "tensorrt-inference-server.fullname" . }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.autoscaling.minReplicas }}
   selector:
     matchLabels:
-      app: {{ template "tensorrt-inference-server.name" . }}
+      app: {{ template "triton-inference-server.name" . }}
       release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ template "tensorrt-inference-server.name" . }}
+        app: {{ template "triton-inference-server.name" . }}
         release: {{ .Release.Name }}
 
     spec:
-      hostname: {{ template "tensorrt-inference-server.fullname" . }}
-      subdomain: {{ template "tensorrt-inference-server.fullname" . }}
+      volumes:
+        - name: {{ template "triton-inference-server.fullname" . }}
+          persistentVolumeClaim:
+            claimName: {{ template "triton-inference-server.fullname" . }}
+
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.tritonserver.imageName }}"
-          imagePullPolicy: {{ .Values.tritonserver.pullPolicy }}
+          image: "{{ .Values.image.imageName }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           resources:
             limits:
-              nvidia.com/gpu: {{ .Values.tritonserver.numGpus }}
-          args: ["tritonserver", "--model-repository={{ .Values.tritonserver.modelRepositoryPath }}"]
+              nvidia.com/gpu: {{ .Values.image.numGpus }}
+          args: ["tritonserver", "--model-repository=/opt/tritonserver/model_repository/"]
           ports:
             - containerPort: 8000
               name: http
@@ -75,25 +81,14 @@ spec:
             httpGet:
               path: /v2/health/ready
               port: http
-        - name: {{ .Chart.Name }}-jupyterlab
-          image: "{{ .Values.modelnavigator.imageName }}"
-          imagePullPolicy: {{ .Values.modelnavigator.pullPolicy }}
-          resources:
-            limits:
-              nvidia.com/gpu: {{ .Values.modelnavigator.numGpus }}
-          args:
-            - jupyter
-            - lab
-            - --ip=0.0.0.0
-            - --no-browser
-            - --allow-root
-            - --port=8888
-            - --NotebookApp.token=''
-            - --NotebookApp.password=''
-            - --NotebookApp.allow_origin='*'
-            - --NotebookApp.base_url=/
-            - --NotebookApp.notebook_dir=/workspace
-            - --LabApp.extensions_in_dev_mode=True
-          ports:
-            - containerPort: 8888
-              name: jupyter
+              
+        - name: {{ .Chart.Name }}-dev
+          image: "{{ .Values.devimage.imageName }}"
+          imagePullPolicy: {{ .Values.devimage.pullPolicy }}
+          volumeMounts:
+            - mountPath: /opt/tritonserver/pvc
+              name: {{ template "triton-inference-server.fullname" . }}
+          args: ["sleep", "infinity"]
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000

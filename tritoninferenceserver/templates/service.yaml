@@ -1,4 +1,4 @@
-# Copyright (c) 2019, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2019-2021, NVIDIA CORPORATION. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -24,35 +24,71 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# Defines the services for triton and the triton metrics service.
+# Also creates a ServiceMonitor for the triton metrics service.
+
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "tensorrt-inference-server.fullname" . }}
+  name: {{ template "triton-inference-server.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ template "tensorrt-inference-server.name" . }}
-    chart: {{ template "tensorrt-inference-server.chart" . }}
+    app: {{ template "triton-inference-server.name" . }}
+    chart: {{ template "triton-inference-server.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-  type: NodePort
+  clusterIP: None
   ports:
     - port: 8000
       targetPort: http
-      nodePort: 30800
       name: http-inference-server
     - port: 8001
       targetPort: grpc
-      nodePort: 30801
       name: grpc-inference-server
     - port: 8002
       targetPort: metrics
-      nodePort: 30802
       name: metrics-inference-server
-    - port: 8888
-      targetPort: jupyter
-      nodePort: 30888
-      name: jupyter-lab
   selector:
-    app: {{ template "tensorrt-inference-server.name" . }}
+    app: {{ template "triton-inference-server.name" . }}
     release: {{ .Release.Name }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "triton-inference-server-metrics.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "triton-inference-server-metrics.name" . }}
+    chart: {{ template "triton-inference-server.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  annotations:
+    alpha.monitoring.coreos.com/non-namespaced: "true"
+spec:
+  ports:
+  - name: metrics
+    port: 8080
+    targetPort: metrics
+    protocol: TCP
+  selector:
+    app: {{ template "triton-inference-server.name" . }}
+    release: {{ .Release.Name }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "triton-inference-server-metrics-monitor.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "triton-inference-server-metrics-monitor.name" . }}
+    chart: {{ template "triton-inference-server.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "triton-inference-server-metrics.name" . }}
+  endpoints:
+  - port: metrics
+    interval: 15s

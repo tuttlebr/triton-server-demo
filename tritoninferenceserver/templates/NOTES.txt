@@ -1,17 +1,4 @@
 {{ .Chart.Name }} Installation Complete!
 
 Monitor All Objects:
-  kubectl -n {{ .Release.Namespace }} get all -o wide -l app={{ template "tensorrt-inference-server.name" . }}
-
-Follow Triton Server Logs:
-  triton_pod=$(kubectl -n {{ .Release.Namespace }} get pod -l app={{ template "tensorrt-inference-server.name" . }} -o name | cut -d \/ -f2 | sed -e 's/\\r$//g')
-  kubectl -n {{ .Release.Namespace }} logs -f $triton_pod -c {{ .Chart.Name }}
-
-Deployment URLs:
-  master_ip=$(kubectl get nodes -l node-role.kubernetes.io/master= --no-headers -o custom-columns=IP:.status.addresses.*.address | cut -f1 -d, | head -1)
-  jupyterPort="$(kubectl get svc -n {{ .Release.Namespace }} {{ template "tensorrt-inference-server.fullname" . }} --no-headers -o custom-columns=PORT:.spec.ports[?\(@.name==\"jupyter-lab\"\)].nodePort)"
-  grpcPort="$(kubectl get svc -n {{ .Release.Namespace }} {{ template "tensorrt-inference-server.fullname" . }} --no-headers -o custom-columns=PORT:.spec.ports[?\(@.name==\"grpc-inference-server\"\)].nodePort)"
-  httpPort="$(kubectl get svc -n {{ .Release.Namespace }} {{ template "tensorrt-inference-server.fullname" . }} --no-headers -o custom-columns=PORT:.spec.ports[?\(@.name==\"http-inference-server\"\)].nodePort)"
-  metricsPort="$(kubectl get svc -n {{ .Release.Namespace }} {{ template "tensorrt-inference-server.fullname" . }} --no-headers -o custom-columns=PORT:.spec.ports[?\(@.name==\"metrics-inference-server\"\)].nodePort)"
-
-  jupyter_url="http://${master_ip}:${jupyterPort}"
+  kubectl -n {{ .Release.Namespace }} get all -o wide -l app={{ template "triton-inference-server.name" . }}
