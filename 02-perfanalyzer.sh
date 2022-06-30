@@ -4,9 +4,9 @@ seperator=$seperator$seperator
 pattern="%-24s| %-24s| %-8s| %-8s| %-8s| %-8s|\n"
 TableWidth=91
 
-MIN_CONCURRENCY=100
-MAX_CONCURRENCY=400
-STEP_CONCURRENCY=25
+MIN_CONCURRENCY=10
+MAX_CONCURRENCY=1000
+STEP_CONCURRENCY=1
 TRITON_POD=$(kubectl -n default get pod -l app=triton-inference-server -o name | grep client | cut -d \/ -f2 | sed -e 's/\\r$//g')
 TRAEFIK_ENDPOINT=$(kubectl get svc -l app.kubernetes.io/name=traefik -o=jsonpath='{.items[0].spec.clusterIP}')
 MODEL_MANIFEST=$(cat deployed_models.txt)
@@ -51,7 +51,10 @@ do
     status=$(kubectl exec $TRITON_POD -- curl -m 1 -L -s -o /dev/null -w %{http_code} $TRAEFIK_ENDPOINT:8000/v2/models/$MODEL/versions/1/ready)
     printf "$pattern" $name $platform $inputs $outputs $batchsize $status
     extra_args=$(traverse_input $config)
-    kubectl exec $TRITON_POD -- perf_analyzer -m $MODEL -i grpc \
+    kubectl exec $TRITON_POD -- perf_analyzer \
+        -m $MODEL \
+        -a \
+        -i grpc \
         -u $TRAEFIK_ENDPOINT:8001 \
         --percentile=95 \
         --concurrency-range $MIN_CONCURRENCY:$MAX_CONCURRENCY:$STEP_CONCURRENCY \
