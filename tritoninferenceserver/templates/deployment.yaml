@@ -113,6 +113,9 @@ spec:
         - name: {{ .Chart.Name }}-client
           image: "{{ .Values.devimage.imageName }}"
           imagePullPolicy: {{ .Values.devimage.pullPolicy }}
+          resources:
+            limits:
+              nvidia.com/gpu: {{ .Values.devimage.numGpus }}
           volumeMounts:
             - mountPath: /opt/tritonserver/pvc
               name: {{ template "triton-inference-server.fullname" . }}
