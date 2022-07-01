@@ -56,10 +56,13 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.imageName }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+        {{- with .Values.image.resources }}
           resources:
-            limits:
-              nvidia.com/gpu: {{ .Values.image.numGpus }}
-          args: ["tritonserver", "--model-repository=/opt/tritonserver/model_repository/"]
+          {{- toYaml . | nindent 12 }}
+        {{- end}}
+
+          args: ["tritonserver", "--log-verbose=1", "--allow-metrics=true", "--allow-gpu-metrics=true", "--model-repository=/opt/tritonserver/model_repository/"]
           ports:
             - containerPort: 8000
               name: http
@@ -113,9 +116,10 @@ spec:
         - name: {{ .Chart.Name }}-client
           image: "{{ .Values.devimage.imageName }}"
           imagePullPolicy: {{ .Values.devimage.pullPolicy }}
+        {{- with .Values.devimage.resources }}
           resources:
-            limits:
-              nvidia.com/gpu: {{ .Values.devimage.numGpus }}
+          {{- toYaml . | nindent 12 }}
+        {{- end}}
           volumeMounts:
             - mountPath: /opt/tritonserver/pvc
               name: {{ template "triton-inference-server.fullname" . }}

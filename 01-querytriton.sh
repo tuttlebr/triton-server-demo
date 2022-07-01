@@ -19,7 +19,7 @@ do
     echo "*** $MODEL ***"
     result=$(kubectl exec $TRITON_POD -- curl -m 1 -L -s -o /dev/null -w %{http_code} $TRAEFIK_ENDPOINT:8000/v2/models/$MODEL/versions/1/ready)
     echo "Ready: $result"
-    echo "Configuration:"
-    kubectl exec $TRITON_POD -- curl -s $TRAEFIK_ENDPOINT:8000/v2/models/$MODEL/config | jq
+    echo Writing model configurations to $MODEL'_configurations.json'
+    kubectl exec $TRITON_POD -- curl -s $TRAEFIK_ENDPOINT:8000/v2/models/$MODEL/config | jq > $MODEL'_configurations.json'
     echo "--------------------------------------------------------------------------------"
 done

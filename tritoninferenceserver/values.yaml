@@ -31,12 +31,20 @@ tags:
 image:
   imageName: registry.local:31500/tritonserver:0.1.0
   pullPolicy: Always
-  numGpus: 1
+  resources:
+    limits:
+      nvidia.com/gpu: 1
 
 devimage:
   imageName: nvcr.io/nvidia/tritonserver:22.04-py3-sdk
   pullPolicy: Always
-  numGpus: 1
+  resources:
+    requests:
+      memory: "2Gi"
+      cpu: "2500m"
+    limits:
+      memory: "16Gi"
+      cpu: "5000m"
 
 traefik:
   ports:
@@ -50,6 +58,8 @@ traefik:
       exposedPort: 8001
       expose: true
       protocol: TCP
+  global:
+    sendAnonymousUsage: false
 
 autoscaling:
   minReplicas: 1
@@ -61,11 +71,11 @@ autoscaling:
           name: avg_time_queue_us
         target:
           type: AverageValue
-          averageValue: 50
+          averageValue: 200000
 
 prometheus-adapter:
   prometheus:
-    url: http://example-metrics-kube-prome-prometheus.default.svc.cluster.local
+    url: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local
     port: 9090
   rules:
     custom:

@@ -4,3 +4,4 @@ model_repository/inception_graphdef/1/model.graphdef
 /.vscode
 *.so
 node_modules
+*_configurations.json

@@ -409,6 +409,7 @@
       "type": "timeseries"
     },
     {
+      "description": "This metric is the same used by the HPA.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -456,7 +457,7 @@
               }
             ]
           },
-          "unit": "ms"
+          "unit": "µs"
         },
         "overrides": []
       },
@@ -485,13 +486,13 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "avg(rate(nv_inference_queue_duration_us[30s])/(1+rate(nv_inference_request_success[30s]))) by (model) / 1000",
+          "expr": "avg(delta(nv_inference_queue_duration_us{namespace=\"default\",pod!=\"\"}[30s])/(1+delta(nv_inference_request_success{namespace=\"default\",pod!=\"\"}[30s]))) by (pod)",
           "interval": "",
-          "legendFormat": "{{model}}",
+          "legendFormat": "{{pod}}",
           "refId": "A"
         }
       ],
-      "title": "Average Queue Time by Model",
+      "title": "Average Queue Time by Pod",
       "type": "timeseries"
     },
     {
@@ -571,10 +572,10 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum by (model,endpoint) (rate(nv_inference_request_success[30s]))",
+          "expr": "sum(rate(nv_inference_request_success[30s]))",
           "instant": false,
           "interval": "",
-          "legendFormat": "{{model}} success",
+          "legendFormat": "Success",
           "refId": "A"
         },
         {
@@ -583,15 +584,15 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum by (model,endpoint) (rate(nv_inference_request_failure[30s]))",
+          "expr": "sum(rate(nv_inference_request_failure[30s])) * -1",
           "hide": false,
           "instant": false,
           "interval": "",
-          "legendFormat": "{{model}} failure",
+          "legendFormat": "Failure",
           "refId": "B"
         }
       ],
-      "title": "Cumulative Inference Requests by Model",
+      "title": "Inference Requests QoS",
       "type": "timeseries"
     }
   ],
@@ -603,13 +604,13 @@
     "list": []
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Triton inference Server II",
   "uid": "xSX4ul3nz",
-  "version": 10,
+  "version": 22,
   "weekStart": ""
 }
