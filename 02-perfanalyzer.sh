@@ -4,9 +4,11 @@ seperator=$seperator$seperator
 pattern="%-24s| %-24s| %-7s| %-7s| %-7s| %-7s|\n"
 TableWidth=87
 
-MIN_CONCURRENCY=1
-MAX_CONCURRENCY=5
-STEP_CONCURRENCY=1
+CONCURRENCY_RUNS=50
+STEP_CONCURRENCY=2
+MIN_CONCURRENCY=$(($(nproc)*$STEP_CONCURRENCY))
+MAX_CONCURRENCY=$(($(nproc)*$CONCURRENCY_RUNS))
+
 TRITON_POD=$(kubectl -n default get pod -l app=triton-inference-server -o name | grep client | cut -d \/ -f2 | sed -e 's/\\r$//g')
 TRAEFIK_ENDPOINT=$(kubectl get svc -l app.kubernetes.io/name=traefik -o=jsonpath='{.items[0].spec.clusterIP}')
 MODEL_MANIFEST=$(cat deployed_models.txt)
