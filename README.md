@@ -7,7 +7,14 @@ A brief hands on demo of how to use NVIDIA Triton Server for multiple models.
    ```bash
    bash 00-start.sh
    ```
+3. Check service status
+
+   ```bash
+   bash 01-querytriton.sh
+   ```
+
    Sample output...
+
    ```bash
    *** Triton Server Information ***
    {
@@ -31,11 +38,15 @@ A brief hands on demo of how to use NVIDIA Triton Server for multiple models.
    Ready: 200
 
    ```
-3. Launch NVIDIA perf_analyzer
+
+4. Launch NVIDIA perf_analyzer
+
    ```bash
    bash 02-perfanalyzer.sh
    ```
+
    Inference tests will run in the background. Sample output:
+
    ```bash
    Name                    | Platform                | Inputs  | Outputs | Batch   | Status  |
    -------------------------------------------------------------------------------------------
@@ -48,3 +59,7 @@ A brief hands on demo of how to use NVIDIA Triton Server for multiple models.
    simple_sequence         | tensorflow_graphdef     | 1       | 1       | 1       | 200     |
    -------------------------------------------------------------------------------------------
    ```
+
+5. Monitor using Grafana Dashboard provided
+
+![Grafana Dashboard Sample]("./../Grafana%20Dashboard%20Sample.png?raw=true")
