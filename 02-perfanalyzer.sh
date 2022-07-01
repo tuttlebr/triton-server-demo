@@ -78,7 +78,6 @@ do
         --request-distribution constant \
         --measurement-interval 30000 \
         --concurrency-range $MIN_CONCURRENCY:$MAX_CONCURRENCY:$STEP_CONCURRENCY \
-        -b $batchsize $extra_args
-# > /dev/null 2>&1 &
+        -b $batchsize $extra_args > /dev/null 2>&1 &
 done
 printf "%.${TableWidth}s\n" "$seperator"
