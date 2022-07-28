@@ -3,7 +3,10 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -26,6 +29,10 @@
   "liveNow": false,
   "panels": [
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -61,15 +68,13 @@
         "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.2",
+      "pluginVersion": "9.0.4",
       "targets": [
         {
           "datasource": {
@@ -87,6 +92,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -123,15 +132,13 @@
         "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.2",
+      "pluginVersion": "9.0.4",
       "targets": [
         {
           "datasource": {
@@ -149,6 +156,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -196,7 +207,7 @@
               }
             ]
           },
-          "unit": "ms"
+          "unit": "µs"
         },
         "overrides": []
       },
@@ -225,7 +236,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum(rate(nv_inference_compute_infer_duration_us[30s])) by (model) / 1000",
+          "expr": "avg(rate(nv_inference_queue_duration_us{namespace=\"default\",pod!=\"\"}[30s])/(1+delta(nv_inference_request_success{namespace=\"default\",pod!=\"\"}[30s]))) by (model)",
           "instant": false,
           "interval": "",
           "legendFormat": "{{model}}",
@@ -236,6 +247,10 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -322,6 +337,10 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -409,6 +428,10 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
       "description": "This metric is the same used by the HPA.",
       "fieldConfig": {
         "defaults": {
@@ -486,7 +509,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "avg(delta(nv_inference_queue_duration_us{namespace=\"default\",pod!=\"\"}[30s])/(1+delta(nv_inference_request_success{namespace=\"default\",pod!=\"\"}[30s]))) by (pod)",
+          "expr": "avg(rate(nv_inference_queue_duration_us{namespace=\"default\",pod!=\"\"}[30s])/(1+delta(nv_inference_request_success{namespace=\"default\",pod!=\"\"}[30s]))) by (pod)",
           "interval": "",
           "legendFormat": "{{pod}}",
           "refId": "A"
@@ -496,6 +519,10 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -597,7 +624,7 @@
     }
   ],
   "refresh": "5s",
-  "schemaVersion": 35,
+  "schemaVersion": 36,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -609,8 +636,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Triton inference Server II",
+  "title": "Triton Inference Server",
   "uid": "xSX4ul3nz",
-  "version": 22,
+  "version": 2,
   "weekStart": ""
 }
