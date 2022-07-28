@@ -4,8 +4,8 @@ seperator=$seperator$seperator
 pattern="%-24s| %-24s| %-7s| %-7s| %-7s| %-7s|\n"
 TableWidth=87
 
-CONCURRENCY_RUNS=50
-STEP_CONCURRENCY=2
+CONCURRENCY_RUNS=10
+STEP_CONCURRENCY=8
 MIN_CONCURRENCY=$(($(nproc)*$STEP_CONCURRENCY))
 MAX_CONCURRENCY=$(($(nproc)*$CONCURRENCY_RUNS))
 

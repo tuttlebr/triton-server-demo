@@ -1,5 +1,8 @@
 densenet_onnx
 inception_graphdef
+log-parsing-onnx
+phishing-bert-onnx
+sid-minibert-onnx
 simple
 simple_dyna_sequence
 simple_identity

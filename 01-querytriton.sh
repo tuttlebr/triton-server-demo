@@ -4,6 +4,7 @@ TRAEFIK_ENDPOINT=$(kubectl get svc -l app.kubernetes.io/name=traefik -o=jsonpath
 MODEL_MANIFEST=$(cat deployed_models.txt)
 
 clear
+rm *_configurations.json
 echo "*** Triton Server Information ***"
 kubectl exec $TRITON_POD -- curl -s $TRAEFIK_ENDPOINT:8000/v2 | jq
 

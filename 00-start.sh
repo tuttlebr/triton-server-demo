@@ -1,8 +1,9 @@
 #!/bin/bash
 clear
+echo "Uninstalling triton-demo..."
 helm uninstall triton-demo --wait 
 bash fetch_models.sh
-docker-compose build
-docker-compose push
-helm upgrade --install triton-demo tritoninferenceserver/
+sudo docker compose build
+sudo docker compose push
+helm install --dependency-update triton-demo tritoninferenceserver/
 kubectl -n default get all -l app=triton-inference-server
