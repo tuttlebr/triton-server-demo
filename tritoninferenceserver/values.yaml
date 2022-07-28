@@ -71,7 +71,7 @@ autoscaling:
           name: avg_time_queue_us
         target:
           type: AverageValue
-          averageValue: 200000
+          averageValue: !!int 200000
 
 prometheus-adapter:
   prometheus:
