@@ -1,4 +1,4 @@
-name: "simple_int8"
+name: "simple-int8"
 platform: "tensorflow_graphdef"
 max_batch_size: 8
 input [

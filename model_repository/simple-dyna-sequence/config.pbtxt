@@ -1,0 +1,75 @@
+name: "simple-dyna-sequence"
+platform: "tensorflow_graphdef"
+max_batch_size: 8
+sequence_batching {
+    max_sequence_idle_microseconds: 10000000
+    oldest {
+      max_candidate_sequences: 1024
+      max_queue_delay_microseconds: 10000
+    }
+
+  control_input [
+    {
+      name: "START"
+      control [
+        {
+          kind: CONTROL_SEQUENCE_START
+          int32_false_true: [ 0, 1 ]
+        }
+      ]
+    },
+    {
+      name: "END"
+      control [
+        {
+          kind: CONTROL_SEQUENCE_END
+          int32_false_true: [ 0, 1 ]
+        }
+      ]
+    },
+    {
+      name: "READY"
+      control [
+        {
+          kind: CONTROL_SEQUENCE_READY
+          int32_false_true: [ 0, 1 ]
+        }
+      ]
+    },
+    {
+      name: "CORRID"
+      control [
+        {
+          kind: CONTROL_SEQUENCE_CORRID
+          data_type: TYPE_UINT64
+        }
+      ]
+    }
+  ]
+}
+input [
+  {
+    name: "INPUT"
+    data_type: TYPE_INT32
+    dims: [ 1 ]
+  }
+]
+output [
+  {
+    name: "OUTPUT"
+    data_type: TYPE_INT32
+    dims: [ 1 ]
+  }
+]
+parameters [
+  {
+    key: "execute_delay_ms"
+    value: { string_value: "3" }
+  }
+]
+instance_group [
+  {
+    count: 2
+    kind: KIND_CPU
+  }
+]

@@ -1,7 +1,6 @@
-model_repository/densenet_onnx/1/model.onnx
-model_repository/inception_graphdef/1/model.graphdef
-/build
+model_repository/densenet-onnx/1/model.onnx
+model_repository/inception-graphdef/1/model.graphdef
+/.vs
 /.vscode
-*.so
-node_modules
-*_configurations.json
+*configurations.json
+test/

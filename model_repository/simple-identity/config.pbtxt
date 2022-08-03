@@ -1,5 +1,5 @@
 
-name: "simple_identity"
+name: "simple-identity"
 platform: "tensorflow_savedmodel"
 max_batch_size: 8
 

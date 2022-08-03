@@ -1,10 +1,10 @@
-densenet_onnx
-inception_graphdef
+densenet-onnx
+inception-graphdef
 log-parsing-onnx
 phishing-bert-onnx
 sid-minibert-onnx
 simple
-simple_dyna_sequence
-simple_identity
-simple_int8
-simple_sequence
+simple-dyna-sequence
+simple-identity
+simple-int8
+simple-sequence
