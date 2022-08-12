@@ -4,14 +4,15 @@ seperator=$seperator$seperator
 pattern="%-24s| %-24s| %-7s| %-7s| %-7s| %-7s|\n"
 TableWidth=87
 
-STEP_CONCURRENCY=1
-CONCURRENCY_RUNS=10
-MIN_CONCURRENCY=1
-MAX_CONCURRENCY=$(nproc)
+export CPU_COUNT=$(nproc)
+export STEP_CONCURRENCY=${CPU_COUNT}
+export CONCURRENCY_RUNS=32
+export MIN_CONCURRENCY=${CPU_COUNT}
+export MAX_CONCURRENCY=$((${CPU_COUNT}*${CONCURRENCY_RUNS}))
 
-TRITON_POD=$(kubectl -n default get pod -l app=triton-inference-server -o name | grep client | cut -d \/ -f2 | sed -e 's/\\r$//g')
-TRAEFIK_ENDPOINT=$(kubectl get svc -l app.kubernetes.io/name=traefik -o=jsonpath='{.items[0].spec.clusterIP}')
-MODEL_MANIFEST=$(cat deployed_models.txt)
+export TRITON_POD=$(kubectl -n default get pod -l app=triton-inference-server -o name | grep client | cut -d \/ -f2 | sed -e 's/\\r$//g')
+export TRAEFIK_ENDPOINT=$(kubectl get svc -l app.kubernetes.io/name=traefik -o=jsonpath='{.items[0].spec.clusterIP}')
+export MODEL_MANIFEST=$(cat deployed_models.txt)
 
 function traverse_input(){
 for row in $(echo $@ | jq -r '.input[] | @base64'); do
