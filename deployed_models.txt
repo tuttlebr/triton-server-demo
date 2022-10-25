@@ -1,5 +1,4 @@
 densenet-onnx
-facenet
 inception-graphdef
 log-parsing-onnx
 phishing-bert-onnx
