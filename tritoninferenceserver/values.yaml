@@ -7,7 +7,8 @@ image:
   pullPolicy: Always
   resources:
     limits:
-      nvidia.com/mig-4g.24gb: 1
+      # nvidia.com/mig-4g.24gb: 1
+      nvidia.com/gpu: 1
 
 devimage:
   imageName: nvcr.io/nvidia/tritonserver:22.06-py3-sdk
@@ -36,8 +37,8 @@ traefik:
     sendAnonymousUsage: false
 
 autoscaling:
-  minReplicas: 2
-  maxReplicas: 3
+  minReplicas: 4
+  maxReplicas: 5
   metrics:
     - type: Pods
       pods:
