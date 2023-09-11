@@ -4,5 +4,5 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - BASE_IMAGE=nvcr.io/nvidia/tritonserver:22.12-py3
-    image: nvcr.io/nvidian/sae/triton-server-demo:22-12-py3
+        - BASE_IMAGE=nvcr.io/nvidia/tritonserver:${BRANCH}-py3
+    image: triton-server-demo:${BRANCH}-py3

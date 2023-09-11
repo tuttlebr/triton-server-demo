@@ -3,7 +3,7 @@ tags:
   loadBalancing: true
 
 image:
-  imageName: nvcr.io/nvidian/sae/triton-server-demo:22-06-py3
+  imageName: nvcr.io/nvidia/tritonserver:23.08-py3
   pullPolicy: Always
   resources:
     limits:
@@ -11,7 +11,7 @@ image:
       nvidia.com/gpu: 1
 
 devimage:
-  imageName: nvcr.io/nvidia/tritonserver:22.06-py3-sdk
+  imageName: nvcr.io/nvidia/tritonserver:23.08-py3-sdk
   pullPolicy: Always
   resources:
     requests:
@@ -37,8 +37,8 @@ traefik:
     sendAnonymousUsage: false
 
 autoscaling:
-  minReplicas: 4
-  maxReplicas: 5
+  minReplicas: 1
+  maxReplicas: 2
   metrics:
     - type: Pods
       pods:
